@@ -89,8 +89,8 @@ public class EmployeeController {
     @PostMapping
     public Result<Object> save(HttpServletRequest httpServletRequest, @RequestBody Employee employee) {
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
         employee.setCreateUser((Long) httpServletRequest.getSession().getAttribute("employee"));
         employee.setUpdateUser((Long) httpServletRequest.getSession().getAttribute("employee"));
 
@@ -99,32 +99,45 @@ public class EmployeeController {
     }
 
     @GetMapping("/page")
-    public Result<Page> list(Integer page,Integer pageSize,String name) {
+    public Result<Page> list(Integer page, Integer pageSize, String name) {
 
         //构造分页构造器
-        Page pageinfo = new Page(page,pageSize);
+        Page pageinfo = new Page(page, pageSize);
 
-        //天剑构造器
-        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper();
+        //添加构造器
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         //添加条件
-            queryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
-            //添加排序条件
+        queryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
+        //添加排序条件
         queryWrapper.orderByDesc(Employee::getUpdateTime);
 
 
-        employeeService.page(pageinfo,queryWrapper);
+        employeeService.page(pageinfo, queryWrapper);
 
         return Result.success(pageinfo);
     }
 
 
-
     @PutMapping
-    public Result<String> updatastatus(@RequestBody Employee employee,HttpServletRequest request){
-            log.info("设置状态*******"+employee.getId());
-            employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
-            employee.setUpdateTime(LocalDateTime.now());
-            employeeService.updateById(employee);
-            return Result.success("状态修改成功");
+    public Result<String> updatastatus(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("设置状态*******" + employee.getId());
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        employee.setUpdateTime(LocalDateTime.now());
+        employeeService.updateById(employee);
+        return Result.success("状态修改成功");
+    }
+
+    @GetMapping("/{id}")
+    public Result<Employee> getbyid(@PathVariable Long id) {
+
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Employee::getId,id);
+        Employee login = employeeService.getOne(queryWrapper);
+        if (login != null){
+            return Result.success(login);
+        }
+        return Result.error("操作失败");
+
+
     }
 }
