@@ -1,19 +1,19 @@
 package com.zjh.reggie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Employee;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /****************************
  * @project reggie
  * @package com.zjh.reggie.service
- * @className EmployeeService
+ * @className CategoryService
  * @author Zjiah
- * @date 2023/10/18 10:58
+ * @date 2023/10/19 17:54
  * @Description:   *
  ****************************/
-
-public interface EmployeeService extends IService<Employee> {
-   // Employee login(Employee employee);
+public interface CategoryService extends IService<Category> {
 
 }

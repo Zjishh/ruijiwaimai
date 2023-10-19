@@ -2,6 +2,7 @@ package com.zjh.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zjh.reggie.utils.BaseContext;
 import com.zjh.reggie.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +45,8 @@ public class LoginCheckFilter implements Filter {
 
             if (request.getSession().getAttribute("employee") != null) {
                 log.info("已经登录");
+                Long employee = (Long) request.getSession().getAttribute("employee");
+                BaseContext.setThreadLocal(employee);
                 filterChain.doFilter(servletRequest, servletResponse);
                 return;
             }
