@@ -164,6 +164,7 @@
               pageSize: this.pageSize,
               name: this.input ? this.input : undefined
             }
+
             await getDishPage(params).then(res => {
               if (String(res.code) === '1') {
                 this.tableData = res.data.records || []
