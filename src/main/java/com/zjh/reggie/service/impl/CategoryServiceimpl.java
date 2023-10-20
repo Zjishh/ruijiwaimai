@@ -23,8 +23,26 @@ import java.util.List;
  ****************************/
 @Service
 @Slf4j
-public class CategoryServiceimpl  extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
+public class CategoryServiceimpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
+    @Autowired
+    private CategoryMapper categoryMapper;
 
+    @Override
+    public void csave(Category category) {
+
+     categoryMapper.scave(category);
+
+    }
+
+    @Override
+    public void cupdate(Category category) {
+        categoryMapper.cupdate();
+    }
+
+    @Override
+    public void cdelete(Long id) {
+        categoryMapper.cdelete(id);
+    }
 }
 

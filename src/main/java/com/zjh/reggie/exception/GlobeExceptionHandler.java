@@ -29,7 +29,7 @@ public class GlobeExceptionHandler {
                     repeat = split[i + 2];
                 }
             }
-            return Result.error("操作失败，账号："+repeat+"已存在");
+            return Result.error("操作失败，"+repeat+"已存在");
         }
 
         return Result.error("操作失败，联系管理员");

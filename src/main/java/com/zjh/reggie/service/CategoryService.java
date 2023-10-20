@@ -16,4 +16,10 @@ import java.util.List;
  ****************************/
 public interface CategoryService extends IService<Category> {
 
+
+    void csave(Category category);
+
+    void cupdate(Category category);
+
+    void cdelete(Long id);
 }

@@ -9,10 +9,7 @@ import com.zjh.reggie.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/page")
-    public Result<Page> list(Integer page, Integer  pageSize ,String name){
+    public Result<Page> list(Integer page, Integer pageSize, String name) {
         //构造分页构造器
         Page pageinfo = new Page(page, pageSize);
         //添加构造器
@@ -41,11 +38,29 @@ public class CategoryController {
         //添加条件
         queryWrapper.like(StringUtils.isNotEmpty(name), Category::getName, name);
         //添加排序条件
-        queryWrapper.orderByDesc(Category::getUpdateTime);
+        queryWrapper.orderByAsc(Category::getSort);
         categoryService.page(pageinfo, queryWrapper);
         return Result.success(pageinfo);
 
 
+    }
+
+    @PostMapping
+    public Result<String> csave(@RequestBody Category category) {
+        categoryService.csave(category);
+        return Result.success("OK");
+    }
+
+    @PutMapping
+    public Result<String> cupdate(@RequestBody Category category) {
+        categoryService.cupdate(category);
+        return Result.success("OK");
+    }
+
+    @DeleteMapping
+    public Result<String> cdelete( Long ids){
+        categoryService.cdelete(ids);
+        return Result.success("删除成功");
     }
 
 
