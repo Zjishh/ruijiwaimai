@@ -7,11 +7,23 @@
 
     <update id="cupdate">
         update category
-        set update_time = #{updateTime},
-            update_user = #{updateUser}
-        <if test="username != null and username != ''">
-            username = #{username},
-        </if>
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+            <if test="sort != null and sort != ''">
+                sort = #{sort}
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                update_user = #{updateUser}
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
 
 
     </update>

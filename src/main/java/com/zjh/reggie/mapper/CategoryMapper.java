@@ -27,7 +27,7 @@ public interface CategoryMapper  extends BaseMapper<Category> {
     void scave(Category category);
 
 
-    void cupdate();
+    void cupdate(Category category);
 
     @Delete("delete from category where id = #{id}")
     void cdelete(Long id);

@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Employee;
 import com.zjh.reggie.service.CategoryService;
+import com.zjh.reggie.service.DishService;
 import com.zjh.reggie.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.Transient;
+import java.math.BigInteger;
 import java.util.List;
 
 /****************************
@@ -28,6 +32,10 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private DishService dishService;
+
 
     @GetMapping("/page")
     public Result<Page> list(Integer page, Integer pageSize, String name) {
@@ -58,9 +66,8 @@ public class CategoryController {
     }
 
 
-
     @DeleteMapping
-    public Result<String> cdelete( Long ids){
+    public Result<String> cdelete(Long ids) {
         categoryService.cdelete(ids);
         return Result.success("删除成功");
     }
