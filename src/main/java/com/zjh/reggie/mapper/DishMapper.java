@@ -1,5 +1,8 @@
 package com.zjh.reggie.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjh.reggie.entity.Category;
+import com.zjh.reggie.entity.Dish;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -12,7 +15,7 @@ import org.apache.ibatis.annotations.Select;
  * @Description:   *
  ****************************/
 @Mapper
-public interface DishMapper {
+public interface DishMapper extends BaseMapper<Dish> {
 
 
     void ddelete(Long ids);

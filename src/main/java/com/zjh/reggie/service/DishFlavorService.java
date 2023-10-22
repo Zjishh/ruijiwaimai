@@ -1,19 +1,16 @@
 package com.zjh.reggie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.zjh.reggie.entity.Dish;
-import com.zjh.reggie.entity.Employee;
+import com.zjh.reggie.entity.DishFlavor;
 
 /****************************
  * @project reggie
  * @package com.zjh.reggie.service
- * @className DishService
+ * @className DishFlvorService
  * @author Zjiah
- * @date 2023/10/20 13:17
+ * @date 2023/10/22 20:19
  * @Description:   *
  ****************************/
-public interface DishService extends IService<Dish> {
-    void ddelete(Long ids);
 
-    Integer dselect(Long ids);
+public interface DishFlavorService extends IService<DishFlavor> {
 }

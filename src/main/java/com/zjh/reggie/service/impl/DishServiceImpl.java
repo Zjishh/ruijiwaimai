@@ -1,6 +1,11 @@
 package com.zjh.reggie.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zjh.reggie.entity.Category;
+import com.zjh.reggie.entity.Dish;
+import com.zjh.reggie.mapper.CategoryMapper;
 import com.zjh.reggie.mapper.DishMapper;
+import com.zjh.reggie.service.CategoryService;
 import com.zjh.reggie.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @Description:   *
  ****************************/
 @Service
-public class DishServiceImpl implements DishService {
+public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
     @Autowired
     private DishMapper dishMapper;
 

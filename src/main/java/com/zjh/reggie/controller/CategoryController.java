@@ -72,5 +72,11 @@ public class CategoryController {
         return Result.success("删除成功");
     }
 
+    //根据type查询name
+    @GetMapping("/list")
+    Result<List<Category>> typelist(Integer type) {
+        List<Category> list = categoryService.typelist(type);
+        return Result.success(list);
+    }
 
 }

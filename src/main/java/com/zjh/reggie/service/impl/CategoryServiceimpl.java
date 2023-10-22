@@ -62,5 +62,10 @@ public class CategoryServiceimpl extends ServiceImpl<CategoryMapper, Category> i
         }
 
     }
+
+    @Override
+    public List<Category> typelist(Integer type) {
+        return categoryMapper.typelist(type);
+    }
 }
 

@@ -2,7 +2,6 @@ package com.zjh.reggie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zjh.reggie.entity.Category;
-import com.zjh.reggie.entity.Employee;
 
 import java.util.List;
 
@@ -22,4 +21,6 @@ public interface CategoryService extends IService<Category> {
     void cupdate(Category category);
 
     void cdelete(Long id);
+
+    List<Category> typelist(Integer type);
 }

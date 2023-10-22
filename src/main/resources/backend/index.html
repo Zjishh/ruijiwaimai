@@ -32,7 +32,7 @@
         <div class="sidebar-container">
           <div class="logo">
             <!-- <img src="images/logo.png" width="122.5" alt="" /> -->
-            <img src="images/login/login-logo.png" alt="" style="width: 117px; height: 32px" />
+            <img src="images/login/login-logo.png" @click="toupload()" alt="" style="width: 117px; height: 32px" />
           </div>
 
           <el-scrollbar wrap-class="scrollbar-wrapper">
@@ -178,6 +178,9 @@
           window.menuHandle = this.menuHandle
         },
         methods: {
+          toupload(){
+            window.location.href = '/backend/page/demo/upload.html'
+          },
           logout() {
             logoutApi().then((res)=>{
               if(res.code === 1){

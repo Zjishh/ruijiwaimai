@@ -13,7 +13,7 @@
 <body>
 
 <div class="addBrand-container" id="food-add-app">
-    <el-button type="primary" plain><a :src="imageUrl">主要按钮</a></el-button>
+    <el-button type="primary" @click="imgload()" plain>主要按钮</el-button>
 
     <div class="container">
         <el-upload class="avatar-uploader"
@@ -45,6 +45,9 @@
             }
         },
         methods: {
+            imgload(){
+                window.location.href = this.imageUrl
+            },
             handleAvatarSuccess(response, file, fileList) {
                 // this.imageUrl = `/common/download?name=${response.data}`
                 this.imageUrl = response.data
@@ -52,7 +55,7 @@
             beforeUpload(file) {
                 if (file) {
                     const suffix = file.name.split('.')[1]
-                    const size = file.size / 1024 / 1024 < 2
+                    const size = file.size / 1024 / 1024 < 10
                     if (['png', 'jpeg', 'jpg'].indexOf(suffix) < 0) {
                         this.$message.error('上传图片只支持 png、jpeg、jpg 格式！')
                         this.$refs.upload.clearFiles()
