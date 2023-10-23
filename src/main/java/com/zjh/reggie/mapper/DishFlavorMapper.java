@@ -1,8 +1,12 @@
 package com.zjh.reggie.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjh.reggie.dto.DishDto;
 import com.zjh.reggie.entity.DishFlavor;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /****************************
  * @project reggie
@@ -14,4 +18,7 @@ import org.apache.ibatis.annotations.Mapper;
  ****************************/
 @Mapper
 public interface DishFlavorMapper extends BaseMapper<DishFlavor> {
+
+
+   // void addDishFlavor(DishFlavor dishFlavor);
 }

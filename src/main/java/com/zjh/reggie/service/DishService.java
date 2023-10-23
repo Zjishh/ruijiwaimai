@@ -1,6 +1,7 @@
 package com.zjh.reggie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zjh.reggie.dto.DishDto;
 import com.zjh.reggie.entity.Dish;
 import com.zjh.reggie.entity.Employee;
 
@@ -16,4 +17,9 @@ public interface DishService extends IService<Dish> {
     void ddelete(Long ids);
 
     Integer dselect(Long ids);
+
+
+    void addDish(DishDto dishDto);
+
+    DishDto getById(Long id);
 }

@@ -33,3 +33,9 @@ aliyun:
     accessKeyId: LTAI5tHGtxNZRiKzuMhsFbhd
     accessKeySecret: Iop1plZFRUTDSaKgjoM2rnpxAhEtBl
     bucketName: empfile
+
+
+
+#自定义参数
+reggie:
+  imgpath: A:\reggieimg\

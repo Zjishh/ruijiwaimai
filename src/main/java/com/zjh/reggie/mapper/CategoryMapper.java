@@ -32,7 +32,7 @@ public interface CategoryMapper  extends BaseMapper<Category> {
     @Delete("delete from category where id = #{id}")
     void cdelete(Long id);
 
-    @Select("select name from category where type = #{type}")
+    @Select("select * from category where type = #{type}")
     List<Category> typelist(Integer type);
 
 //    @Select("select * from category limit #{pageSize}")

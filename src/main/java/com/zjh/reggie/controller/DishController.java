@@ -1,15 +1,23 @@
 package com.zjh.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjh.reggie.dto.DishDto;
+import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Dish;
+import com.zjh.reggie.service.CategoryService;
 import com.zjh.reggie.service.DishFlavorService;
 import com.zjh.reggie.service.DishService;
 import com.zjh.reggie.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /****************************
  * @project reggie
@@ -31,12 +39,15 @@ public class DishController {
     @Autowired
     private DishFlavorService dishFlavorService;
 
+    @Autowired
+    private CategoryService categoryService;
 
 
     @GetMapping("/page")
     public Result<Page> list(Integer page, Integer pageSize, String name) {
         //构造分页构造器
-        Page pageinfo = new Page(page, pageSize);
+        Page<Dish> pageinfo = new Page<>(page, pageSize);
+
         //添加构造器
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         //添加条件
@@ -44,14 +55,49 @@ public class DishController {
         //添加排序条件
         queryWrapper.orderByAsc(Dish::getUpdateTime);
         dishService.page(pageinfo, queryWrapper);
-        return Result.success(pageinfo);
+
+        Page<DishDto> pageinfos = new Page<>(page, pageSize);
+
+        BeanUtils.copyProperties(pageinfo, pageinfos, "records");
+
+        List<Dish> records = pageinfo.getRecords();
+
+        List<DishDto> list = records.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+
+            Long categoryId = item.getCategoryId();
+
+            Category category = categoryService.getById(categoryId);
+
+            if (categoryService != null) {
+                String categoryname = category.getName();
+
+                dishDto.setCategoryName(categoryname);
+            }
+
+            return dishDto;
+
+        }).collect(Collectors.toList());
+
+        pageinfos.setRecords(list);
+
+
+        return Result.success(pageinfos);
 
     }
 
     @GetMapping("/{id}")
-    public Result<Dish> getById(@PathVariable Long id){
-        Dish byId = dishService.getById(id);
-
+    public Result<DishDto> getById(@PathVariable Long id) {
+        DishDto byId = dishService.getById(id);
         return Result.success(byId);
     }
+
+    @PostMapping
+    public Result<String> addDish(@RequestBody DishDto dishDto) {
+        dishService.addDish(dishDto);
+        return Result.success("添加菜品成功");
+    }
+
+
 }

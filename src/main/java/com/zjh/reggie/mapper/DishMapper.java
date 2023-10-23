@@ -1,8 +1,10 @@
 package com.zjh.reggie.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjh.reggie.dto.DishDto;
 import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Dish;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -18,8 +20,15 @@ import org.apache.ibatis.annotations.Select;
 public interface DishMapper extends BaseMapper<Dish> {
 
 
+    @Insert("insert into dish (id, name, category_id, price, code, image," +
+            " description, create_time, update_time, create_user, update_user) " +
+            "value (#{id},#{name},#{categoryId},#{price},#{code},#{image}" +
+            ",#{description},#{createTime},#{updateTime},#{createUser},#{updateUser})")
+    void addDish(DishDto dishDto);
+
     void ddelete(Long ids);
 
     @Select("SELECT count(*) from dish where category_id = #{ids}")
     Integer dselectcount(Long ids);
+
 }

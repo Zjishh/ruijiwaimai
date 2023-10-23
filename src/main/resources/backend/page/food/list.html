@@ -164,9 +164,9 @@
               pageSize: this.pageSize,
               name: this.input ? this.input : undefined
             }
-
             await getDishPage(params).then(res => {
               if (String(res.code) === '1') {
+                console.log(res.data)
                 this.tableData = res.data.records || []
                 this.counts = res.data.total
               }
@@ -175,8 +175,7 @@
             })
           },
           getImage (image) {
-           // return `/common/download?name=${image}`
-            return image;
+            return `/common/download?name=${image}`
           },
           handleQuery() {
             this.page = 1;
