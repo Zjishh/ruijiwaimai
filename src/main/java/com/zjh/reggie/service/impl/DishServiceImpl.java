@@ -87,4 +87,21 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
         return dishDto;
     }
+
+    @Override
+    @Transactional
+    public void updateDishWithFlavor(DishDto dishDto) {
+        dishMapper.updataDish(dishDto);
+
+        dishFlavorMapper.deleteDishFlavor(dishDto.getId());
+
+        List<DishFlavor> flavors = dishDto.getFlavors();
+        flavors = flavors.stream().map((item) -> {
+            item.setDishId(dishDto.getId());
+            return item;
+        }).collect(Collectors.toList());
+
+
+        dishFlavorService.saveBatch(flavors);
+    }
 }

@@ -53,7 +53,7 @@ public class DishController {
         //添加条件
         queryWrapper.like(StringUtils.isNotEmpty(name), Dish::getName, name);
         //添加排序条件
-        queryWrapper.orderByAsc(Dish::getUpdateTime);
+        queryWrapper.orderByDesc(Dish::getUpdateTime);
         dishService.page(pageinfo, queryWrapper);
 
         Page<DishDto> pageinfos = new Page<>(page, pageSize);
@@ -97,6 +97,12 @@ public class DishController {
     public Result<String> addDish(@RequestBody DishDto dishDto) {
         dishService.addDish(dishDto);
         return Result.success("添加菜品成功");
+    }
+
+    @PutMapping
+    public Result<String> updateDish(@RequestBody DishDto dishDto) {
+        dishService.updateDishWithFlavor(dishDto);
+        return Result.success("修改成功");
     }
 
 

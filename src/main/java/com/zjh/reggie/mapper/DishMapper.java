@@ -7,6 +7,7 @@ import com.zjh.reggie.entity.Dish;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /****************************
  * @project reggie
@@ -31,4 +32,8 @@ public interface DishMapper extends BaseMapper<Dish> {
     @Select("SELECT count(*) from dish where category_id = #{ids}")
     Integer dselectcount(Long ids);
 
+
+    @Update("update dish set name = #{name} ,category_id = #{categoryId},price=#{price},code=#{code},image=#{image},description=#{description}," +
+            "create_time=#{createTime},update_time=#{updateTime},create_user=#{createUser},update_user=#{updateUser} where id = #{id}")
+    void updataDish(DishDto dishDto);
 }
