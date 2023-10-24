@@ -35,6 +35,9 @@ public interface CategoryMapper  extends BaseMapper<Category> {
     @Select("select * from category where type = #{type}")
     List<Category> typelist(Integer type);
 
+    @Select("select name from category where id = #{categoryId}")
+    String getname(Long categoryId);
+
 //    @Select("select * from category limit #{pageSize}")
 //    List<Category> list(Integer page, Integer pageSize);
 }

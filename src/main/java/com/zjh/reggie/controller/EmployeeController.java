@@ -63,8 +63,8 @@ public class EmployeeController {
         }
 
         httpRequest.getSession().setAttribute("employee", login.getId());
-        long id = Thread.currentThread().getId();
-        log.info(String.valueOf(id));
+        long id = login.getId();
+        log.info(String.valueOf(id)+"-------------------------------");
         return Result.success(login);
     }
 

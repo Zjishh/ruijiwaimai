@@ -1,5 +1,6 @@
 package com.zjh.reggie.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zjh.reggie.dto.SetmealDto;
 import com.zjh.reggie.entity.Setmeal;
@@ -7,6 +8,7 @@ import com.zjh.reggie.entity.SetmealDish;
 import com.zjh.reggie.mapper.SetMealMapper;
 import com.zjh.reggie.service.SetMealService;
 import com.zjh.reggie.service.SetmealDishService;
+import com.zjh.reggie.utils.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> implements SetMealService {
 
-
+    @Autowired
+    private SetMealService setMealService;
 
 
     @Autowired
@@ -47,5 +50,23 @@ public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> impl
 
         setmealDishService.saveBatch(setmealDishes);
 
+    }
+
+    @Override
+    @Transactional
+    public void delete(List<Long> ids) {
+        for (Long id : ids) {
+            LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Setmeal::getId,id);
+            wrapper.eq(Setmeal::getStatus,1);
+            if (this.count(wrapper) > 0){
+                throw new CustomException("状态为正在售卖，不能删除");
+            }
+
+            setMealService.removeById(id);
+            LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SetmealDish::getSetmealId,id);
+            setmealDishService.remove(queryWrapper);
+        }
     }
 }

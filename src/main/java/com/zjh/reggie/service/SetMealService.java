@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zjh.reggie.dto.SetmealDto;
 import com.zjh.reggie.entity.Setmeal;
 
+import java.util.List;
+
 /****************************
  * @project reggie
  * @package com.zjh.reggie.service
@@ -14,4 +16,6 @@ import com.zjh.reggie.entity.Setmeal;
  ****************************/
 public interface SetMealService extends IService<Setmeal> {
     void addSetMeal(SetmealDto setmealDto);
+
+    void delete(List<Long> ids);
 }
