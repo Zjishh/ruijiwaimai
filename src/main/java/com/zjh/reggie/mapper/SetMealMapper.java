@@ -1,5 +1,7 @@
 package com.zjh.reggie.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zjh.reggie.entity.Setmeal;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -12,7 +14,7 @@ import org.apache.ibatis.annotations.Select;
  * @Description:   *
  ****************************/
 @Mapper
-public interface SetMealMapper {
+public interface SetMealMapper extends BaseMapper<Setmeal> {
 
     @Select("select count(*) from setmeal where category_id = #{id};")
     Integer sselectcount(Long id);

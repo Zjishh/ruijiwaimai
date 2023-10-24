@@ -1,13 +1,14 @@
 package com.zjh.reggie.controller;
 
-import com.zjh.reggie.mapper.SetMealDishMapper;
-import com.zjh.reggie.service.SetMealDishService;
+import com.zjh.reggie.dto.SetmealDto;
+import com.zjh.reggie.service.SetMealService;
+import com.zjh.reggie.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 /****************************
  * @project reggie
@@ -20,9 +21,17 @@ import java.util.Set;
 @RestController
 @Slf4j
 @RequestMapping("/setmeal")
-public class SetmealDishController {
+public class SetmealController {
+
+    
+
     @Autowired
-    private SetMealDishService setMealDishService;
+    private SetMealService setMealService;
 
 
+    @PostMapping
+    public Result<String> addSetMeal(@RequestBody SetmealDto setmealDto){
+        setMealService.addSetMeal(setmealDto);
+        return Result.success("新增套餐成功");
+    }
 }

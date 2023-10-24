@@ -1,6 +1,7 @@
 package com.zjh.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjh.reggie.dto.DishDto;
@@ -106,4 +107,18 @@ public class DishController {
     }
 
 
+    @GetMapping("/list")
+    public Result<List<Dish>> list(Dish dish){
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        queryWrapper.eq(Dish::getStatus,1);
+        List<Dish> list = dishService.list(queryWrapper);
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        dishService.list(queryWrapper);
+
+        return Result.success(list);
+
+
+
+    }
 }

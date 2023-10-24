@@ -63,7 +63,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             item.setDishId(dishid);
             return item;
         }).collect(Collectors.toList());
-        log.info(flavors.toString());
+
 
         dishFlavorService.saveBatch(flavors);
 
