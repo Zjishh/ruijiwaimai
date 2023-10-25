@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.zjh.reggie.entity.User;
 import com.zjh.reggie.service.UserService;
+import com.zjh.reggie.utils.MailUtil;
 import com.zjh.reggie.utils.Result;
 import com.zjh.reggie.utils.ValidateCodeUtils;
 import io.micrometer.core.instrument.util.StringUtils;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
@@ -26,16 +28,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MailUtil mailUtil;
     /**
      * 发送手机短信验证码
      * @param user
      * @return
      */
     @PostMapping("/sendMsg")
-    public Result<String> sendMsg(@RequestBody User user, HttpSession session){
+    public Result<String> sendMsg(@RequestBody User user, HttpServletRequest servletRequest){
+
         //获取手机号
         String phone = user.getPhone();
-
+        log.info(phone);
         if(StringUtils.isNotEmpty(phone)){
             //生成随机的4位验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
@@ -43,34 +48,39 @@ public class UserController {
 
             //调用阿里云提供的短信服务API完成发送短信
             //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
-
             //需要将生成的验证码保存到Session
-            session.setAttribute(phone,code);
+            mailUtil.sendTextMailMessage(phone,"验证码",code);
 
-            return Result.success("手机验证码短信发送成功");
+            servletRequest.getSession().setAttribute(phone,code);
+            log.info(servletRequest.getSession().getAttribute(phone).toString()+"99999999999999999");
+
+            return Result.success("验证码短信发送成功");
         }
 
-        return Result.error("短信发送失败");
+        return Result.error("验证码发送失败");
     }
 
     /**
      * 移动端用户登录
      * @param map
-     * @param session
+     * @param map
      * @return
      */
     @PostMapping("/login")
-    public Result<User> login(@RequestBody Map map, HttpSession session){
-        log.info(map.toString());
+    public Result<User> login(@RequestBody Map map, HttpServletRequest servletRequest){
 
-        //获取手机号
-        String phone = map.get("phone").toString();
 
         //获取验证码
         String code = map.get("code").toString();
+        log.info(code+"输入");
+        //获取手机号
+        String phone = map.get("phone").toString();
+        log.info(phone+"输入");
 
-        //从Session中获取保存的验证码
-        Object codeInSession = session.getAttribute(phone);
+
+        String codeInSession = servletRequest.getSession().getAttribute(phone).toString();
+        log.info("读出的code{}",codeInSession);
+
 
         //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
         if(codeInSession != null && codeInSession.equals(code)){
@@ -87,7 +97,7 @@ public class UserController {
                 user.setStatus(1);
                 userService.save(user);
             }
-            session.setAttribute("user",user.getId());
+            servletRequest.getSession().setAttribute("user",user.getId());
             return Result.success(user);
         }
         return Result.error("登录失败");
