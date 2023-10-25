@@ -5,7 +5,7 @@ spring:
     # 配置 SMTP 服务器地址
     host: smtp.qq.com
     # 发送者邮箱
-    username: zjh.em@qq.com
+    username: zjiah.mail@qq.com
     # 配置密码，注意不是真正的密码，而是刚刚申请到的授权码
     password: drteriabtpjhcadi
     # 端口号465或587
