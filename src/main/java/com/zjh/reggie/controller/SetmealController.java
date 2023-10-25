@@ -2,12 +2,14 @@ package com.zjh.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zjh.reggie.dto.DishDto;
 import com.zjh.reggie.dto.SetmealDto;
 import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Dish;
 import com.zjh.reggie.entity.Setmeal;
 import com.zjh.reggie.entity.SetmealDish;
 import com.zjh.reggie.mapper.CategoryMapper;
+import com.zjh.reggie.service.DishService;
 import com.zjh.reggie.service.SetMealService;
 import com.zjh.reggie.utils.Result;
 import io.micrometer.core.instrument.binder.BaseUnits;
@@ -41,6 +43,9 @@ public class SetmealController {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private DishService dishService;
 
 
     @PostMapping
@@ -88,5 +93,25 @@ public class SetmealController {
     public Result<String> delete(@RequestParam List<Long> ids){
         setMealService.delete(ids);
         return Result.success("删除成功");
+    }
+
+    @GetMapping("/list")
+    public Result<List<Setmeal>> list(Setmeal setmeal){
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        queryWrapper.eq(setmeal.getStatus() != null,Setmeal::getStatus,setmeal.getStatus());
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+
+        List<Setmeal> list = setMealService.list(queryWrapper);
+
+        return Result.success(list);
+    }
+
+    @GetMapping("/dish/{id}")
+    public Result<SetmealDto> getById(@PathVariable Long id) {
+        Setmeal byId = setMealService.getById(id);
+        SetmealDto setmealDto = new SetmealDto();
+        BeanUtils.copyProperties(byId,setmealDto);
+        return Result.success(setmealDto);
     }
 }
