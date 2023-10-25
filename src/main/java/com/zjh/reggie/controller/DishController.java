@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zjh.reggie.dto.DishDto;
 import com.zjh.reggie.entity.Category;
 import com.zjh.reggie.entity.Dish;
+import com.zjh.reggie.entity.DishFlavor;
 import com.zjh.reggie.service.CategoryService;
 import com.zjh.reggie.service.DishFlavorService;
 import com.zjh.reggie.service.DishService;
@@ -17,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,16 +110,37 @@ public class DishController {
 
 
     @GetMapping("/list")
-    public Result<List<Dish>> list(Dish dish){
+    public Result<List<DishDto>> list(Dish dish) {
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
-        queryWrapper.eq(Dish::getStatus,1);
-        List<Dish> list = dishService.list(queryWrapper);
+        queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        queryWrapper.eq(Dish::getStatus, 1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
-        dishService.list(queryWrapper);
 
-        return Result.success(list);
 
+        List<Dish> list = dishService.list(queryWrapper);
+
+        List<DishDto> listDto  = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+
+            Long categoryId = item.getCategoryId();
+
+            Category category = categoryService.getById(categoryId);
+            if(category != null){
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
+
+            Long id = item.getId();
+            LambdaQueryWrapper<DishFlavor> getbyid = new LambdaQueryWrapper<>();
+            getbyid.eq(DishFlavor::getDishId, id);
+            List<DishFlavor> list1 = dishFlavorService.list(getbyid);
+            dishDto.setFlavors(list1);
+            return dishDto;
+        }).collect(Collectors.toList());
+
+
+        return Result.success(listDto);
 
 
     }

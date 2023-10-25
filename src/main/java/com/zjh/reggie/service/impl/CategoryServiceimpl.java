@@ -65,6 +65,9 @@ public class CategoryServiceimpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public List<Category> typelist(Integer type) {
+        if (type == null){
+           return categoryMapper.typelistnull();
+        }
         return categoryMapper.typelist(type);
     }
 }

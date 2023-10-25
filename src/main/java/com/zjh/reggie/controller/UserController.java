@@ -103,4 +103,9 @@ public class UserController {
         return Result.error("登录失败");
     }
 
+    @PostMapping("/loginout")
+    public Result<String> login(HttpServletRequest servletRequest){
+        servletRequest.getSession().removeAttribute("user");
+        return Result.success("退出成功");
+    }
 }
