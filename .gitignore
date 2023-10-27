@@ -1,38 +1,38 @@
+.git
+logs
+rebel.xml
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+log.path_IS_UNDEFINED
+.DS_Store
+offline_user.md
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
+### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
 .settings
 .springBeans
-.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
 ### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+nbproject/private/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+generatorConfig.xml
 
-### VS Code ###
-.vscode/
+### nacos ###
+third-party/nacos/derby.log
+third-party/nacos/data/
+third-party/nacos/work/
 
-### Mac OS ###
-.DS_Store
+file/
