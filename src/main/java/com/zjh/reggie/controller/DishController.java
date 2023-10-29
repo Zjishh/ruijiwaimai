@@ -16,10 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /****************************
@@ -44,6 +47,9 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     @GetMapping("/page")
@@ -104,6 +110,9 @@ public class DishController {
 
     @PutMapping
     public Result<String> updateDish(@RequestBody DishDto dishDto) {
+        //清理所有菜品的缓存 根据缓存进去的key
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
         dishService.updateDishWithFlavor(dishDto);
         return Result.success("修改成功");
     }
@@ -111,6 +120,17 @@ public class DishController {
 
     @GetMapping("/list")
     public Result<List<DishDto>> list(Dish dish) {
+        List<DishDto> listDto = null;
+
+        //升级
+        String categoryId1 = "dish_" + dish.getCategoryId() + "_status_" + dish.getStatus();
+        listDto = (List<DishDto>) redisTemplate.opsForValue().get(categoryId1);
+
+        if (listDto != null) {
+            return Result.success(listDto);
+        }
+
+
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
         queryWrapper.eq(Dish::getStatus, 1);
@@ -119,14 +139,14 @@ public class DishController {
 
         List<Dish> list = dishService.list(queryWrapper);
 
-        List<DishDto> listDto  = list.stream().map((item) -> {
+        listDto = list.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
 
             Long categoryId = item.getCategoryId();
 
             Category category = categoryService.getById(categoryId);
-            if(category != null){
+            if (category != null) {
                 String categoryName = category.getName();
                 dishDto.setCategoryName(categoryName);
             }
@@ -139,6 +159,7 @@ public class DishController {
             return dishDto;
         }).collect(Collectors.toList());
 
+        redisTemplate.opsForValue().set(categoryId1, listDto, 60, TimeUnit.MINUTES);
 
         return Result.success(listDto);
 
