@@ -11,6 +11,7 @@ import com.zjh.reggie.utils.ValidateCodeUtils;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +32,9 @@ public class UserController {
 
     @Autowired
     private MailUtil mailUtil;
+    
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 发送手机短信验证码
      * @param user
@@ -51,8 +56,8 @@ public class UserController {
             //需要将生成的验证码保存到Session
             mailUtil.sendTextMailMessage(phone,"验证码",code);
 
-            servletRequest.getSession().setAttribute(phone,code);
-            log.info(servletRequest.getSession().getAttribute(phone).toString()+"99999999999999999");
+//            验证码放到redis中 并且设置有效期
+            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
 
             return Result.success("验证码短信发送成功");
         }
@@ -77,14 +82,15 @@ public class UserController {
         String phone = map.get("phone").toString();
         log.info(phone+"输入");
 
+        String codeInSession = redisTemplate.opsForValue().get(phone).toString();
 
-        String codeInSession = servletRequest.getSession().getAttribute(phone).toString();
         log.info("读出的code{}",codeInSession);
 
 
         //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
         if(codeInSession != null && codeInSession.equals(code)){
             //如果能够比对成功，说明登录成功
+
 
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getPhone,phone);
@@ -98,6 +104,7 @@ public class UserController {
                 userService.save(user);
             }
             servletRequest.getSession().setAttribute("user",user.getId());
+            redisTemplate.delete(phone);
             return Result.success(user);
         }
         return Result.error("登录失败");
