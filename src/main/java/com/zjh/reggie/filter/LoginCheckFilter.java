@@ -33,7 +33,8 @@ public class LoginCheckFilter implements Filter {
         log.info("拦截到请求：{}", requestURI);
 
         //定义不需要处理的请求路径
-        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/common/**", "/user/sendMsg", "/user/login"};
+        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/common/**",
+                "/user/sendMsg", "/user/login", "/doc.html", "/webjars/**", "/swagger-resources", "/v2/api-dos"};
 
         //2、判断本次请求是否需要处理
         boolean check = check(urls, requestURI);
@@ -44,7 +45,6 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
-
 
 
         //4-1、判断登录状态，如果已登录，则直接放行

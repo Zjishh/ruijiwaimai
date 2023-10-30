@@ -11,6 +11,7 @@ import com.zjh.reggie.utils.ValidateCodeUtils;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +44,11 @@ public class UserController {
      */
     @PostMapping("/sendMsg")
     public Result<String> sendMsg(@RequestBody User user, HttpServletRequest servletRequest){
-
+//        用户账号缓存
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(User::getId,User::getPhone);
+        List<User> list = userService.list(queryWrapper);
+        redisTemplate.opsForValue().set("phone", list);
         //获取手机号
         String phone = user.getPhone();
         log.info(phone);
@@ -71,6 +77,7 @@ public class UserController {
      * @param map
      * @return
      */
+
     @PostMapping("/login")
     public Result<User> login(@RequestBody Map map, HttpServletRequest servletRequest){
 
@@ -91,21 +98,40 @@ public class UserController {
         if(codeInSession != null && codeInSession.equals(code)){
             //如果能够比对成功，说明登录成功
 
-
-            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(User::getPhone,phone);
-
-            User user = userService.getOne(queryWrapper);
-            if(user == null){
-                //判断当前手机号对应的用户是否为新用户，如果是新用户就自动完成注册
-                user = new User();
-                user.setPhone(phone);
-                user.setStatus(1);
-                userService.save(user);
+            List<User> l2 = (List<User>) redisTemplate.opsForValue().get("phone");
+            for (User user : l2) {
+                if (user.getPhone().equals(phone)){
+                    servletRequest.getSession().setAttribute("user",user.getId());
+                    redisTemplate.delete(phone);
+                    return Result.success(user);
+                }
             }
-            servletRequest.getSession().setAttribute("user",user.getId());
-            redisTemplate.delete(phone);
-            return Result.success(user);
+            User newuser = new User();
+            newuser.setPhone(phone);
+            newuser.setStatus(1);
+            userService.save(newuser);
+            LambdaQueryWrapper<User> objectLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            objectLambdaQueryWrapper.eq(User::getPhone,phone);
+            User one = userService.getOne(objectLambdaQueryWrapper);
+            servletRequest.getSession().setAttribute("user",one.getId());
+            return Result.success(one);
+
+
+
+//            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+//            queryWrapper.eq(User::getPhone,phone);
+//
+//            User user = userService.getOne(queryWrapper);
+//            if(user == null){
+//                //判断当前手机号对应的用户是否为新用户，如果是新用户就自动完成注册
+//                user = new User();
+//                user.setPhone(phone);
+//                user.setStatus(1);
+//                userService.save(user);
+//            }
+//            servletRequest.getSession().setAttribute("user",user.getId());
+//            redisTemplate.delete(phone);
+//            return Result.success(user);
         }
         return Result.error("登录失败");
     }
