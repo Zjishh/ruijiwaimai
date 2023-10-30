@@ -95,4 +95,5 @@ aliyun:
 
 #自定义参数
 reggie:
-  imgpath: A:\reggieimg\
+#  imgpath: A:\reggieimg\
+  imgpath: /usr/local/reggie_image/
